@@ -1,14 +1,10 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
+export async function POST() {
   try {
     const { stdout, stderr } = await execAsync(`
       cd ~/nextgen/intellinum_docs/ &&
@@ -19,9 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('Build output:', stdout);
     if (stderr) console.error('Build errors:', stderr);
 
-    res.status(200).json({ message: 'Build completed successfully' });
+    return NextResponse.json({ message: 'Build completed successfully' }, { status: 200 });
   } catch (error) {
     console.error('Build execution error:', error);
-    res.status(500).json({ error: 'Failed to run build' });
+    return NextResponse.json({ error: 'Failed to run build' }, { status: 500 });
   }
 }
