@@ -64,9 +64,21 @@ export function AppComponentsMarkdownEditor() {
     console.log("File saved:", selectedFile);
   };
 
-  const handleRun = () => {
+  const handleRun = async () => {
     console.log("Running Markdown content");
-    // Implement run functionality here
+    try {
+      const response = await fetch('/api/run-build', {
+        method: 'POST',
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Build completed successfully:", data.message);
+      } else {
+        console.error("Build failed:", data.error);
+      }
+    } catch (error) {
+      console.error("Error running build:", error);
+    }
   };
 
   const handleFileSelect = (path: string) => {
